@@ -1,5 +1,4 @@
 ﻿using A2ASerilog;
-using Microsoft.Extensions.Configuration;
 using Telegram.Listener.Domain.Settings;
 
 namespace Telegram.Listener.Service;
