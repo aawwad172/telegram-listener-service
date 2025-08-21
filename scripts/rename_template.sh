@@ -15,7 +15,7 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 
-OLD="Service.Template"
+OLD="Telegram.Listener"
 NEW="$1"
 
 echo "Replacing '$OLD' with '$NEW' throughout the project..."
