@@ -18,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Persistence\Repositories\" />
+    <Reference Include="A2ASerilog">
+      <HintPath>..\lib\A2ASerilog.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

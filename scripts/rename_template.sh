@@ -16,6 +16,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 OLD="Telegram.Listener"
+slnOldName="telegram-listener-service"
 NEW="$1"
 
 echo "Replacing '$OLD' with '$NEW' throughout the project..."
@@ -52,9 +53,9 @@ done
 ########################################
 slnNewName=$(echo "$NEW" | tr '[:upper:]' '[:lower:]' | sed 's/\./-/g')
 
-if [ -f "./dotnet-template.sln" ]; then
-  echo "Renaming dotnet-template.sln to ${slnNewName}.sln"
-  mv "./dotnet-template.sln" "./${slnNewName}.sln"
+if [ -f "./${slnOldName}.sln" ]; then
+  echo "Renaming ${slnOldName}.sln to ${slnNewName}.sln"
+  mv "./${slnOldName}.sln" "./${slnNewName}.sln"
 fi
 
 ########################################

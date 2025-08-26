@@ -12,11 +12,14 @@ public static class DependencyInjection
 
         services.Configure<DbSettings>(configuration.GetSection(nameof(DbSettings)));
         services.Configure<AppSettings>(configuration.GetSection(nameof(AppSettings)));
+        services.Configure<ListenerSettings>(configuration.GetSection(nameof(ListenerSettings)));
 
         AppSettings? appSettings = configuration.GetSection(nameof(AppSettings)).Get<AppSettings>();
 
         LoggerService._logPath = appSettings!.LogPath;
         LoggerService._flushPeriod = appSettings.LogFlushInterval;
+
+        services.AddHostedService<Worker>();
 
         return services;
     }
