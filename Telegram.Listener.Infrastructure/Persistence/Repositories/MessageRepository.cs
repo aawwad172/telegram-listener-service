@@ -56,7 +56,9 @@ public class MessageRepository(IDbConnectionFactory connectionFactory) : IMessag
         p.TypeName = "dbo.TelegramMessage_Tvp";          // your TVP type name
         p.Value = tvp;
 
+        LoggerService.Info("Inserting {Count} messages into the database", messages.Count);
         await cmd.ExecuteNonQueryAsync(cancellationToken);
+        LoggerService.Info("Inserted {Count} messages into the database", messages.Count);
     }
 
     /// <summary>

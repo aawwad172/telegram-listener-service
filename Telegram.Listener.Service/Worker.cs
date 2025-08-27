@@ -27,7 +27,7 @@ public class Worker : BackgroundService
         Task[] tasks = Enumerable.Range(0, _parallelWorkers)
             .Select(i => RunWorkerAsync(i, stoppingToken))
             .ToArray();
-
+        LoggerService.Info("Worker started at {Time} with {Workers} parallel workers and {IdleDelay} seconds idle delay", DateTimeOffset.Now, _parallelWorkers, _idleDelaySeconds);
         await Task.WhenAll(tasks);
     }
 
@@ -40,9 +40,16 @@ public class Worker : BackgroundService
             try
             {
                 bool didWork = await _service.ProcessQueuedMessagesAsync(ct);
-                if (!didWork && TimeSpan.FromSeconds(_idleDelaySeconds) > TimeSpan.Zero)
+                if (didWork)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(_idleDelaySeconds), ct);
+                    LoggerService.Info("Worker {Id}: processed work", workerId);
+                    LoggerService.Info("All workers stopped at {Time}", DateTimeOffset.Now);
+                }
+                else
+                {
+                    LoggerService.Info("Worker {Id}: idle, sleeping {Idle}s", workerId, _idleDelaySeconds);
+                    if (_idleDelaySeconds > 0)
+                        await Task.Delay(TimeSpan.FromSeconds(_idleDelaySeconds), ct);
                 }
             }
             catch (OperationCanceledException) when (ct.IsCancellationRequested)

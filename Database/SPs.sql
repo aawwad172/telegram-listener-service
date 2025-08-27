@@ -288,7 +288,7 @@ BEGIN
             CustID, BotKey, MsgText, MsgType, Priority,
             FilePath, FileType, CampaignID, CampDesc,
             ScheduledSendDateTime, CreationDate,
-            isSystemApproved, isAdminApproved, IsProcessed
+            isSystemApproved, isAdminApproved, 1
         FROM dbo.TelegramFiles
         WHERE CampaignID = @CampaignID;
 
