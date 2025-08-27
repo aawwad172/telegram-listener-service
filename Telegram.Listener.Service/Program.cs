@@ -4,7 +4,6 @@ using Telegram.Listener.Infrastructure;
 using Telegram.Listener.Service;
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddHostedService<Worker>();
 
 builder.Services.AddDomainServices()
                 .AddInfrastructureServices()
