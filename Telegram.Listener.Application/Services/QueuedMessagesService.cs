@@ -16,7 +16,7 @@ public class QueuedMessagesService(
     private readonly IDropFolderRepository _dropFolderRepository = dropFolderRepository;
     private readonly IMessageRepository _messagesRepository = messageRepository;
 
-    public async Task ProcessQueuedMessagesAsync(CancellationToken cancellationToken = default)
+    public async Task<bool> ProcessQueuedMessagesAsync(CancellationToken cancellationToken = default)
     {
         // Get the Directory that have json files.
         // 1) discover files (assume IEnumerable<string> of full paths)
@@ -25,12 +25,13 @@ public class QueuedMessagesService(
         if (file is null)
         {
             LoggerService.Info("No files found to process.");
-            return;
+            return false; // nothing to do
         }
 
         try
         {
             await ProcessOneFileAsync(file, cancellationToken); // parses + maps + persists
+            return true; // did work
         }
         catch (OperationCanceledException) { throw; }
         catch (JsonException jex) { LoggerService.Error("JSON error {File} " + jex.Message, file.FileName); }
@@ -39,8 +40,10 @@ public class QueuedMessagesService(
         {
             await file.LockHandle.DisposeAsync(); // release OS lock
             await _dropFolderRepository.ArchiveFileAsync(file.FullPath, cancellationToken);
+            // File name here is the campaignId
             await _messagesRepository.ArchiveDbFileAsync(file.FileName, cancellationToken);
         }
+        return false; // error occurred, but we did work (found a file)
     }
 
     private async Task ProcessOneFileAsync(LockedBulkJsonFile file, CancellationToken cancellationToken = default)
@@ -51,8 +54,7 @@ public class QueuedMessagesService(
             BulkMessage? bulkMessage = await _messagesRepository.GetBulkMessageByCampaignIdAsync(file.FileName, cancellationToken);
             if (bulkMessage is null)
             {
-                LoggerService.Warning("No metadata found for file {File}. Archiving as error.", file);
-                await _dropFolderRepository.ArchiveFileAsync(file.FullPath, cancellationToken);
+                LoggerService.Warning("No metadata found for file {File}. Archiving as error.", file.FileName);
                 return;
             }
 
@@ -60,7 +62,6 @@ public class QueuedMessagesService(
             if (!Enum.TryParse(bulkMessage.FileType, ignoreCase: true, out FileTypeEnum fileType))
             {
                 LoggerService.Warning("Invalid file type '{Type}' in metadata for file {File}. Archiving as error.", bulkMessage.FileType, file.FileName);
-                await _dropFolderRepository.ArchiveFileAsync(file.FullPath, cancellationToken);
                 return;
             }
 
@@ -115,7 +116,7 @@ public class QueuedMessagesService(
 
             await _messagesRepository.AddBatchAsync(messages, cancellationToken);
 
-            LoggerService.Info("Successfully processed and archived file {File}", file.FileName);
+            LoggerService.Info("Successfully processed file {File}", file.FileName);
         }
         catch (JsonException jex)
         {

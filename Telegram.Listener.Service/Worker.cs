@@ -24,7 +24,7 @@ public class Worker : BackgroundService
     {
 
         // Start N long-lived worker loops (no Task.Run needed)
-        var tasks = Enumerable.Range(0, _parallelWorkers)
+        Task[] tasks = Enumerable.Range(0, _parallelWorkers)
             .Select(i => RunWorkerAsync(i, stoppingToken))
             .ToArray();
 
@@ -39,9 +39,11 @@ public class Worker : BackgroundService
         {
             try
             {
-                // Recommended service shape: process ONE file per call
-                // Returns true if it did work, false if nothing available
-                await _service.ProcessQueuedMessagesAsync(ct);
+                bool didWork = await _service.ProcessQueuedMessagesAsync(ct);
+                if (!didWork && TimeSpan.FromSeconds(_idleDelaySeconds) > TimeSpan.Zero)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(_idleDelaySeconds), ct);
+                }
             }
             catch (OperationCanceledException) when (ct.IsCancellationRequested)
             {
@@ -54,7 +56,7 @@ public class Worker : BackgroundService
                 LoggerService.Error("Worker {Id} error: {Message}", workerId, ex.Message);
                 // Small backoff after unexpected errors
                 if (TimeSpan.FromSeconds(_idleDelaySeconds) > TimeSpan.Zero)
-                    await Task.Delay(_idleDelaySeconds, ct);
+                    await Task.Delay(TimeSpan.FromSeconds(_idleDelaySeconds), ct);
             }
         }
 

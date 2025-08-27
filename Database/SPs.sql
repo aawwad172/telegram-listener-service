@@ -11,7 +11,7 @@ CREATE OR ALTER PROCEDURE dbo.usp_EnqueueOrArchiveIfDuplicate
   @CampaignId  		NVARCHAR(50), -- Empty String if not required
   @CampDescription 	NVARCHAR(512), -- Empty String if not required
   @Priority    		SMALLINT,
-  @ScheduledSendDateTime DATETIME = NULL,  -- Auto inserted in case of one message
+  @ScheduledSendDateTime DATETIME2 = NULL,  -- Auto inserted in case of one message
   @IsSystemApproved BIT
 --@Paused = 0 always zero and it will change when the portal change them
 AS
@@ -22,8 +22,8 @@ BEGIN
   DECLARE 
     @hashedMsg   BINARY(32) = HASHBYTES(
              'SHA2_256',
-             @ChatId + N'|' + @BotKey + N'|' + @MessageText
-           );
+              CONCAT(ISNULL(@ChatId, N''), N'|', @BotKey, N'|', ISNULL(@MessageText, N'')) 
+          );
     -- If caller omitted it, fill it with GETDATE()
 
   -- always enqueue; trigger will handle RecentMessages & archiving
@@ -67,7 +67,7 @@ GO
 /*******************************************
  * 2.4) usp_GetCustomerByUsername
  *******************************************/
-ALTER PROCEDURE [dbo].[usp_GetCustomerByUsername]
+CREATE OR ALTER PROCEDURE [dbo].[usp_GetCustomerByUsername]
     @Username NVARCHAR(100)
 AS
 BEGIN
@@ -192,7 +192,7 @@ AS
 BEGIN
   SET NOCOUNT ON;
 
-  DECLARE @now DATETIME = GETDATE();
+  DECLARE @now DATETIME2 = GETDATE();
 
 
   INSERT INTO dbo.ReadyTable

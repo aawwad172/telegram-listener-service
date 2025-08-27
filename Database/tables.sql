@@ -43,7 +43,7 @@ GO
  *******************************************/
 CREATE TABLE dbo.MessageStatus (
     StatusID SMALLINT NOT NULL PRIMARY KEY,
-    StatusDescription NVARCHAR(50) NOT NULL UNIQUE,
+    StatusDescription NVARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Insert your enum values
@@ -68,8 +68,8 @@ CREATE TABLE dbo.ReadyTable
   PhoneNumber       NVARCHAR(20)      NOT NULL,
   MessageText  			NVARCHAR(MAX)  		NOT NULL,
   MsgType				    NVARCHAR(10)		  NOT NULL,
-  ReceivedDateTime		  DATETIME       		NOT NULL, -- Auto Generated using GETDATE() in the SP.
-  ScheduledSendDateTime DATETIME       		NOT NULL, -- Auto Generated using GETDATE() in the SP.
+  ReceivedDateTime		  DATETIME2       		NOT NULL, -- Auto Generated using GETDATE() in the SP.
+  ScheduledSendDateTime DATETIME2       		NOT NULL, -- Auto Generated using GETDATE() in the SP.
   MessageHash  			BINARY(32)     		NOT NULL, -- Auto Generated from the SP.
   Priority     			SMALLINT       		NOT NULL,
   CampaignId			NVARCHAR(50)			NULL,
@@ -100,9 +100,9 @@ CREATE TABLE dbo.ArchiveTable
   PhoneNumber             NVARCHAR(20)    NOT NULL,
   MessageText             NVARCHAR(MAX)   NOT NULL,
   MsgType                 NVARCHAR(10)    NOT NULL,
-  ReceivedDateTime        DATETIME        NOT NULL,
-  ScheduledSendDateTime   DATETIME        NOT NULL, -- set by SP
-  GatewayDateTime         DATETIME        NOT NULL,
+  ReceivedDateTime        DATETIME2        NOT NULL,
+  ScheduledSendDateTime   DATETIME2        NOT NULL, -- set by SP
+  GatewayDateTime         DATETIME2        NOT NULL,
   MessageHash             BINARY(32)      NOT NULL,
   Priority                SMALLINT        NOT NULL,
 
@@ -132,7 +132,7 @@ GO
 CREATE TABLE dbo.RecentMessages
 (
   MessageHash  		BINARY(32)     NOT NULL,
-  ReceivedDateTime  DATETIME       NOT NULL,
+  ReceivedDateTime  DATETIME2       NOT NULL,
   ReadyId      		INT            NOT NULL,
   CONSTRAINT PK_RecentMessages PRIMARY KEY CLUSTERED (MessageHash, ReadyId)
 );
@@ -155,7 +155,7 @@ CREATE TABLE dbo.BotChatMapping
   PhoneNumber    NVARCHAR(20)    NOT NULL,
   BotKey         NVARCHAR(100)   NOT NULL,
   ChatId         NVARCHAR(50)    NOT NULL,
-  CreationDate    DATETIME       NOT NULL,
+  CreationDate    DATETIME2       NOT NULL,
 
   CONSTRAINT PK_BotChatMapping PRIMARY KEY CLUSTERED
     (PhoneNumber, BotKey)
@@ -225,7 +225,7 @@ CREATE TYPE dbo.TelegramMessage_Tvp AS TABLE
     PhoneNumber             NVARCHAR(20)    NOT NULL,
     MessageText             NVARCHAR(MAX)   NOT NULL,  -- if your SQL version disallows MAX in TVP, use NVARCHAR(4000)
     MessageType             NVARCHAR(10)    NOT NULL,
-    ScheduledSendDateTime   DATETIME        NULL,      -- optional; defaulted in proc when NULL
+    ScheduledSendDateTime   DATETIME2        NULL,      -- optional; defaulted in proc when NULL
     Priority                SMALLINT        NOT NULL,
     CampaignId              NVARCHAR(50)    NULL,
     CampDescription         NVARCHAR(512)   NULL,

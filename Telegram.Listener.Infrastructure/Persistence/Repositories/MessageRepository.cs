@@ -66,7 +66,7 @@ public class MessageRepository(IDbConnectionFactory connectionFactory) : IMessag
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<BulkMessage> GetBulkMessageByCampaignIdAsync(string campaignId, CancellationToken cancellationToken = default)
+    public async Task<BulkMessage?> GetBulkMessageByCampaignIdAsync(string campaignId, CancellationToken cancellationToken = default)
     {
         using IDbConnection conn = await _connectionFactory.CreateOpenConnection();
         using SqlCommand cmd = (SqlCommand)conn.CreateCommand();
@@ -101,7 +101,7 @@ public class MessageRepository(IDbConnectionFactory connectionFactory) : IMessag
 
     public async Task ArchiveDbFileAsync(string campaignId, CancellationToken cancellationToken = default)
     {
-        IDbConnection conn = await _connectionFactory.CreateOpenConnection();
+        using IDbConnection conn = await _connectionFactory.CreateOpenConnection();
         using SqlCommand cmd = (SqlCommand)conn.CreateCommand();
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.CommandText = "usp_ArchiveTelegramFileByCampaignId";

@@ -11,7 +11,7 @@ public static class MapsterConfigurations
         TypeAdapterConfig<(BulkMessage metadata, CampaignMessage message), TelegramMessage>
                 .NewConfig()
                 .Map(dest => dest.CustomerId, src => src.metadata.CustId)
-                .Map(dest => dest.ChatId, src => src.message.ChatId ?? null!)
+                .Map(dest => dest.ChatId, src => string.IsNullOrWhiteSpace(src.message.ChatId) ? null : src.message.ChatId)
                 .Map(dest => dest.BotKey, src => src.metadata.BotKey)
                 .Map(dest => dest.MessageText, src => src.metadata.MsgText) // Use metadata message text
                 .Map(dest => dest.PhoneNumber, src => src.message.PhoneNumber)
@@ -26,7 +26,7 @@ public static class MapsterConfigurations
         TypeAdapterConfig<(BulkMessage metadata, BatchMessages message), TelegramMessage>
                 .NewConfig()
                 .Map(dest => dest.CustomerId, src => src.metadata.CustId)
-                .Map(dest => dest.ChatId, src => src.message.ChatId ?? null!)
+                .Map(dest => dest.ChatId, src => string.IsNullOrWhiteSpace(src.message.ChatId) ? null : src.message.ChatId)
                 .Map(dest => dest.BotKey, src => src.metadata.BotKey)
                 .Map(dest => dest.MessageText, src => src.message.MessageText) // from batch item
                 .Map(dest => dest.PhoneNumber, src => src.message.PhoneNumber)

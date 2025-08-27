@@ -17,7 +17,6 @@ public class DropFolderRepository(
         if (!Directory.Exists(_dropFolderPath))
             Directory.CreateDirectory(_dropFolderPath);
 
-
         foreach (string path in Directory.EnumerateFiles(_dropFolderPath, "*.json", SearchOption.TopDirectoryOnly))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -41,7 +40,7 @@ public class DropFolderRepository(
                 // Build the result (transfer ownership of fs to the LockedBulkJsonFile)
                 return new LockedBulkJsonFile
                 {
-                    FileName = Path.GetFileName(path),
+                    FileName = Path.GetFileNameWithoutExtension(path),
                     FullPath = path,
                     Content = content,
                     LockHandle = fs

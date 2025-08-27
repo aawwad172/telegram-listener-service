@@ -2,5 +2,5 @@
 
 public interface IQueuedMessagesService
 {
-    Task ProcessQueuedMessagesAsync(CancellationToken cancellationToken);
+    Task<bool> ProcessQueuedMessagesAsync(CancellationToken cancellationToken = default);
 }

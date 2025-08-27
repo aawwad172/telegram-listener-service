@@ -3,8 +3,7 @@ namespace Telegram.Listener.Domain.Entities;
 public class TelegramMessage
 {
     /// <summary>
-    /// Unique customer identifier.  
-    /// This value is derived from the combination of username and password.
+    /// Unique customer identifier (DB-generated/assigned). Do not derive from credentials.
     /// </summary>
     public int CustomerId { get; set; }
 
@@ -35,6 +34,6 @@ public class TelegramMessage
     /// <summary> Processing priority (smaller number = small priority). </summary>
     public required int Priority { get; set; }
 
-    /// <summary> Date and time when the message is scheduled to be sent. </summary>
+    /// <summary> Indicates whether the system approved the message for sending. </summary>
     public required bool IsSystemApproved { get; set; }
 }

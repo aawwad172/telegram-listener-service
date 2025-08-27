@@ -25,8 +25,8 @@ echo "Replacing '$OLD' with '$NEW' throughout the project..."
 # Rename Files (base name only)
 ########################################
 echo "Renaming files..."
-find . -type f -name "*${OLD}*" | while read -r file; do
-  dir=$(dirname "$file")
+find . \( -path '*/.git/*' -o -path '*/bin/*' -o -path '*/obj/*' \) -prune -o \
+  -type f -name "*${OLD}*" -print0 | while IFS= read -r -d '' file; do  dir=$(dirname "$file")
   base=$(basename "$file")
   newbase=$(echo "$base" | sed "s/${OLD}/${NEW}/g")
   newfile="${dir}/${newbase}"
