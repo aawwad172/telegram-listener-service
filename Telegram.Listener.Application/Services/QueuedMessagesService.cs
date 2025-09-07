@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using A2ASerilog;
 using Mapster;
 using Telegram.Listener.Domain.Entities;
@@ -46,6 +46,17 @@ public class QueuedMessagesService(
         return false; // error occurred, but we did work (found a file)
     }
 
+    /// <summary>
+    /// Processes a single locked bulk JSON file: reads metadata to interpret the JSON as either a batch or campaign payload,
+    /// converts the contained records into TelegramMessage instances, and persists them via the messages repository.
+    /// </summary>
+    /// <remarks>
+    /// If metadata is missing, the file type is invalid, the JSON is empty/invalid, or any non-recoverable error occurs,
+    /// the method returns without persisting messages (the caller is responsible for releasing locks and archiving the file).
+    /// </remarks>
+    /// <param name="file">The locked bulk JSON file to process (provides FileName and Content).</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel processing.</param>
+    /// <returns>A task that completes when processing finishes.</returns>
     private async Task ProcessOneFileAsync(LockedBulkJsonFile file, CancellationToken cancellationToken = default)
     {
         try

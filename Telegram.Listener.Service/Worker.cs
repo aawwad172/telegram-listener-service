@@ -12,6 +12,13 @@ public class Worker : BackgroundService
     private readonly int _parallelWorkers;
     private readonly int _idleDelaySeconds;
 
+    /// <summary>
+    /// Initializes a new <see cref="Worker"/> instance using the provided queued message service and options monitor.
+    /// </summary>
+    /// <remarks>
+    /// Reads the current <see cref="ListenerSettings"/>, ensures <c>ParallelWorkers</c> is at least 1, then resolves
+    /// the effective number of parallel workers and the idle delay (in seconds) from the settings.
+    /// </remarks>
     public Worker(IQueuedMessagesService service, IOptionsMonitor<ListenerSettings> options)
     {
         _service = service;
@@ -20,6 +27,14 @@ public class Worker : BackgroundService
         _parallelWorkers = _options.ResolveWorkers();
         _idleDelaySeconds = _options.ResolveIdleDelay();
     }
+    /// <summary>
+    /// Starts the configured number of long-running worker loops and awaits their completion.
+    /// </summary>
+    /// <remarks>
+    /// Each worker runs until <paramref name="stoppingToken"/> requests cancellation. This method logs startup information and returns when all worker tasks have finished (typically after cancellation).
+    /// </remarks>
+    /// <param name="stoppingToken">Cancellation token used to signal shutdown of the worker loops.</param>
+    /// <returns>A task that completes when all worker loops have stopped.</returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // Start N long-lived worker loops (no Task.Run needed)
@@ -30,6 +45,14 @@ public class Worker : BackgroundService
         await Task.WhenAll(tasks);
     }
 
+    /// <summary>
+    /// Runs a single long‑running worker loop that repeatedly processes queued messages until cancellation is requested.
+    /// </summary>
+    /// <remarks>
+    /// The worker repeatedly calls the queued messages service to process work. When work is processed the method logs activity; when no work is available it waits for the configured idle delay. Unexpected exceptions are logged and trigger a short backoff; OperationCanceledException driven by the provided <paramref name="cancellationToken"/> causes a clean shutdown of the loop.
+    /// </remarks>
+    /// <param name="workerId">Identifier for this worker instance (used in log messages).</param>
+    /// <param name="cancellationToken">Token used to request graceful shutdown of the worker loop.</param>
     private async Task RunWorkerAsync(
         int workerId,
         CancellationToken cancellationToken)

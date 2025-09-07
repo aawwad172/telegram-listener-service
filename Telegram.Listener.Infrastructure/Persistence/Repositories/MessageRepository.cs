@@ -10,6 +10,16 @@ namespace Telegram.Listener.Infrastructure.Persistence.Repositories;
 public class MessageRepository(IDbConnectionFactory connectionFactory) : IMessageRepository
 {
     private readonly IDbConnectionFactory _connectionFactory = connectionFactory;
+    /// <summary>
+    /// Persists a batch of TelegramMessage entries to the database for later delivery.
+    /// </summary>
+    /// <remarks>
+    /// The method converts the provided messages into a table-valued parameter matching the SQL type <c>dbo.TelegramMessage_Tvp</c>
+    /// and calls the stored procedure <c>dbo.usp_ReadyTable_BulkEnqueue</c> to enqueue them. If <paramref name="messages"/> is null or empty,
+    /// the method returns immediately. Exceptions from database operations propagate to the caller.
+    /// </remarks>
+    /// <param name="messages">List of TelegramMessage objects to enqueue; fields are mapped to the TVP columns.</param>
+    /// <param name="cancellationToken">Optional cancellation token used for the asynchronous database command.</param>
     public async Task AddBatchAsync(List<TelegramMessage> messages, CancellationToken cancellationToken = default)
     {
         if (messages == null || messages.Count == 0)
@@ -67,7 +77,14 @@ public class MessageRepository(IDbConnectionFactory connectionFactory) : IMessag
     /// <param name="campaignId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <summary>
+    /// Retrieves metadata for a bulk message identified by the given campaign ID.
+    /// </summary>
+    /// <param name="campaignId">The campaign identifier to look up.</param>
+    /// <param name="cancellationToken">Token to observe while waiting for the task to complete.</param>
+    /// <returns>
+    /// A <see cref="BulkMessage"/> populated from the database if a matching campaign is found; otherwise <c>null</c>.
+    /// </returns>
     public async Task<BulkMessage?> GetBulkMessageByCampaignIdAsync(string campaignId, CancellationToken cancellationToken = default)
     {
         using IDbConnection conn = await _connectionFactory.CreateOpenConnection();
