@@ -1,10 +1,26 @@
-﻿using Mapster;
+using Mapster;
 using Telegram.Listener.Domain.Entities;
 
 namespace Telegram.Listener.Application.Utilities;
 
 public static class MapsterConfigurations
 {
+    /// <summary>
+    /// Registers Mapster mappings that convert source tuples into TelegramMessage instances.
+    /// </summary>
+    /// <remarks>
+    /// Adds two TypeAdapterConfig mappings:
+    /// 1. (BulkMessage metadata, CampaignMessage message) -> TelegramMessage — uses metadata.MsgText for MessageText.
+    /// 2. (BulkMessage metadata, BatchMessages message) -> TelegramMessage — uses message.MessageText for MessageText.
+    ///
+    /// In both mappings:
+    /// - CustomerId, BotId, MessageType, IsSystemApproved, Priority, CampaignId, CampDescription and ScheduledSendDateTime
+    ///   are taken from the metadata tuple element.
+    /// - ChatId is mapped to null when the source ChatId is null or whitespace; otherwise the source ChatId is used.
+    /// - PhoneNumber is taken from the message/batch item element.
+    ///
+    /// This method has the side effect of registering these mappings with Mapster's TypeAdapterConfig.
+    /// </remarks>
     public static void RegisterMappings()
     {
         // Mapping for CampaignMessage where message text comes from the metadata
