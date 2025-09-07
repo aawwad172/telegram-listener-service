@@ -261,7 +261,6 @@ CREATE TABLE dbo.Bots
   [CreationDateTime]          DATETIME2     NOT NULL DEFAULT GETDATE()
 );
 
-CREATE UNIQUE INDEX UX_Bots_WebhookSecret ON dbo.Bots(WebhookSecret);
 CREATE INDEX IX_Bots_CustomerId ON dbo.Bots(CustomerId);
 
 /*******************************************

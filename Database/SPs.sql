@@ -8,7 +8,7 @@ CREATE OR ALTER PROCEDURE dbo.usp_EnqueueOrArchiveIfDuplicate
   @MessageText 		NVARCHAR(MAX),
   @PhoneNumber      NVARCHAR(32),
   @MsgType     		NVARCHAR(10), 
-  @CampaignId  		NVARCHAR(50), -- Empty String if not required
+  @CampaignId  		NVARCHAR(128), -- Empty String if not required
   @CampDescription 	NVARCHAR(512), -- Empty String if not required
   @Priority    		SMALLINT,
   @ScheduledSendDateTime DATETIME2 = NULL,  -- Auto inserted in case of one message
@@ -72,7 +72,7 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_GetCustomerByUsername]
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT CustId, 
+    SELECT CustId as CustomerId, 
             UserName, 
             Password, 
             RequireSystemApprove,
@@ -132,19 +132,19 @@ GO
  * 2.7) usp_AddBatchFile to add the batch data into DB
  *******************************************/
 CREATE OR ALTER PROCEDURE dbo.usp_AddBatchFile
-    @CustomerId           INT,
-    @BotId                INT,
-    @MsgText              NVARCHAR(MAX) = NULL,
-    @MsgType              NVARCHAR(10),
-    @CampaignId           NVARCHAR(50),
-    @CampDescription             NVARCHAR(256) = NULL,
-    @Priority             SMALLINT,           -- table uses SMALLINT
-    @IsSystemApproved     BIT,
-    @IsAdminApproved      BIT,
-    @ScheduledSendDateTime DATETIME2 = NULL,  -- if NULL => GETDATE()
-    @FilePath             NVARCHAR(260),
-    @FileType             NVARCHAR(16),
-    @IsProcessed          BIT = 0
+    @CustomerId                 INT,
+    @BotId                      INT,
+    @MsgText                    NVARCHAR(MAX) = NULL,
+    @MsgType                    NVARCHAR(10),
+    @CampaignId                 NVARCHAR(128),
+    @CampDescription            NVARCHAR(512) = NULL,
+    @Priority                   SMALLINT,           -- table uses SMALLINT
+    @IsSystemApproved           BIT,
+    @IsAdminApproved            BIT,
+    @ScheduledSendDateTime      DATETIME2 = NULL,  -- if NULL => GETDATE()
+    @FilePath                   NVARCHAR(260),
+    @FileType                   NVARCHAR(16),
+    @IsProcessed                BIT = 0
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -245,7 +245,7 @@ GO
  *******************************************/
 
 CREATE OR ALTER PROCEDURE dbo.usp_GetBulkMessageByCampaignId
-    @CampaignId NVARCHAR(50)
+    @CampaignId NVARCHAR(128)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -261,7 +261,7 @@ GO
  *******************************************/
 
 CREATE OR ALTER PROCEDURE dbo.usp_ArchiveTelegramFileByCampaignId
-    @CampaignID NVARCHAR(50)
+    @CampaignID NVARCHAR(128)
 AS
 BEGIN
     SET NOCOUNT ON;
