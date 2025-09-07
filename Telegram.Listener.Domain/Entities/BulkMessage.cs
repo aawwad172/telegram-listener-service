@@ -27,7 +27,7 @@ public class BulkMessage
     public string CampaignId { get; set; } = string.Empty;
 
     /// <summary>Optional campaign description.</summary>
-    public string? CampDesc { get; set; }
+    public string? CampDescription { get; set; }
 
     /// <summary>When the message is scheduled to be sent.</summary>
     public DateTime? ScheduledSendDateTime { get; set; }
