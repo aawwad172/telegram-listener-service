@@ -19,7 +19,7 @@ public class MessageRepository(IDbConnectionFactory connectionFactory) : IMessag
         DataTable tvp = new DataTable();
         tvp.Columns.Add("CustomerId", typeof(int));
         tvp.Columns.Add("ChatId", typeof(string));
-        tvp.Columns.Add("BotKey", typeof(string));
+        tvp.Columns.Add("BotId", typeof(int));
         tvp.Columns.Add("PhoneNumber", typeof(string));
         tvp.Columns.Add("MessageText", typeof(string));
         tvp.Columns.Add("MessageType", typeof(string));
@@ -34,7 +34,7 @@ public class MessageRepository(IDbConnectionFactory connectionFactory) : IMessag
             tvp.Rows.Add(
                 m.CustomerId,
                 (object?)m.ChatId ?? DBNull.Value,
-                m.BotKey,
+                m.BotId,
                 m.PhoneNumber,
                 m.MessageText,
                 m.MessageType,
@@ -81,8 +81,8 @@ public class MessageRepository(IDbConnectionFactory connectionFactory) : IMessag
         {
             return new BulkMessage
             {
-                CustId = reader.GetInt32(reader.GetOrdinal("CustID")),
-                BotKey = reader.GetString(reader.GetOrdinal("BotKey")),
+                CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
+                BotId = reader.GetInt32(reader.GetOrdinal("BotId")),
                 MsgText = reader.IsDBNull(reader.GetOrdinal("MsgText")) ? null! : reader.GetString(reader.GetOrdinal("MsgText")),
                 MsgType = reader.GetString(reader.GetOrdinal("MsgType")),
                 Priority = reader.GetInt16(reader.GetOrdinal("Priority")),
