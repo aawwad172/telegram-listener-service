@@ -10,9 +10,9 @@ public static class MapsterConfigurations
         // Mapping for CampaignMessage where message text comes from the metadata
         TypeAdapterConfig<(BulkMessage metadata, CampaignMessage message), TelegramMessage>
                 .NewConfig()
-                .Map(dest => dest.CustomerId, src => src.metadata.CustId)
+                .Map(dest => dest.CustomerId, src => src.metadata.CustomerId)
                 .Map(dest => dest.ChatId, src => string.IsNullOrWhiteSpace(src.message.ChatId) ? null : src.message.ChatId)
-                .Map(dest => dest.BotKey, src => src.metadata.BotKey)
+                .Map(dest => dest.BotId, src => src.metadata.BotId)
                 .Map(dest => dest.MessageText, src => src.metadata.MsgText) // Use metadata message text
                 .Map(dest => dest.PhoneNumber, src => src.message.PhoneNumber)
                 .Map(dest => dest.MessageType, src => src.metadata.MsgType)
@@ -25,9 +25,9 @@ public static class MapsterConfigurations
         // Mapping for BatchMessages where message text comes from the batch item
         TypeAdapterConfig<(BulkMessage metadata, BatchMessages message), TelegramMessage>
                 .NewConfig()
-                .Map(dest => dest.CustomerId, src => src.metadata.CustId)
+                .Map(dest => dest.CustomerId, src => src.metadata.CustomerId)
                 .Map(dest => dest.ChatId, src => string.IsNullOrWhiteSpace(src.message.ChatId) ? null : src.message.ChatId)
-                .Map(dest => dest.BotKey, src => src.metadata.BotKey)
+                .Map(dest => dest.BotId, src => src.metadata.BotId)
                 .Map(dest => dest.MessageText, src => src.message.MessageText) // from batch item
                 .Map(dest => dest.PhoneNumber, src => src.message.PhoneNumber)
                 .Map(dest => dest.MessageType, src => src.metadata.MsgType)

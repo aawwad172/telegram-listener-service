@@ -3,10 +3,10 @@ namespace Telegram.Listener.Domain.Entities;
 public class BulkMessage
 {
     /// <summary>Customer identifier (FK to Customers table).</summary>
-    public int CustId { get; set; }
+    public int CustomerId { get; set; }
 
     /// <summary>Bot API key used for this message batch.</summary>
-    public string BotKey { get; set; } = string.Empty;
+    public int BotId { get; set; }
 
     /// <summary>The actual text of the message to be sent.</summary>
     public string MsgText { get; set; } = string.Empty;

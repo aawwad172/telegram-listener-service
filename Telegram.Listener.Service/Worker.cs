@@ -22,7 +22,6 @@ public class Worker : BackgroundService
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
         // Start N long-lived worker loops (no Task.Run needed)
         Task[] tasks = Enumerable.Range(0, _parallelWorkers)
             .Select(i => RunWorkerAsync(i, stoppingToken))
@@ -31,15 +30,17 @@ public class Worker : BackgroundService
         await Task.WhenAll(tasks);
     }
 
-    private async Task RunWorkerAsync(int workerId, CancellationToken ct)
+    private async Task RunWorkerAsync(
+        int workerId,
+        CancellationToken cancellationToken)
     {
         LoggerService.Info("Worker {Id} started", workerId);
 
-        while (!ct.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
-                bool didWork = await _service.ProcessQueuedMessagesAsync(ct);
+                bool didWork = await _service.ProcessQueuedMessagesAsync(cancellationToken);
                 if (didWork)
                 {
                     LoggerService.Info("Worker {Id}: processed work", workerId);
@@ -49,10 +50,10 @@ public class Worker : BackgroundService
                 {
                     LoggerService.Info("Worker {Id}: idle, sleeping {Idle}s", workerId, _idleDelaySeconds);
                     if (_idleDelaySeconds > 0)
-                        await Task.Delay(TimeSpan.FromSeconds(_idleDelaySeconds), ct);
+                        await Task.Delay(TimeSpan.FromSeconds(_idleDelaySeconds), cancellationToken);
                 }
             }
-            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 // normal shutdown
                 break;
@@ -63,7 +64,7 @@ public class Worker : BackgroundService
                 LoggerService.Error("Worker {Id} error: {Message}", workerId, ex.Message);
                 // Small backoff after unexpected errors
                 if (TimeSpan.FromSeconds(_idleDelaySeconds) > TimeSpan.Zero)
-                    await Task.Delay(TimeSpan.FromSeconds(_idleDelaySeconds), ct);
+                    await Task.Delay(TimeSpan.FromSeconds(_idleDelaySeconds), cancellationToken);
             }
         }
 

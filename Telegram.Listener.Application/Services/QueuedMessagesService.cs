@@ -71,7 +71,7 @@ public class QueuedMessagesService(
             {
                 case FileTypeEnum.Batch:
                     {
-                        LoggerService.Info("Processing batch file {File} (CustId {CustId})", file.FileName, bulkMessage.CustId);
+                        LoggerService.Info("Processing batch file {File} (CustId {CustId})", file.FileName, bulkMessage.CustomerId);
 
                         List<BatchMessages>? batchItems = JsonSerializer.Deserialize<List<BatchMessages>>(file.Content);
                         if (batchItems is null || batchItems.Count == 0)
