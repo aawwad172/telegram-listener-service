@@ -19,7 +19,7 @@ public static class MapsterConfigurations
                 .Map(dest => dest.IsSystemApproved, src => src.metadata.IsSystemApproved)
                 .Map(dest => dest.Priority, src => src.metadata.Priority)
                 .Map(dest => dest.CampaignId, src => src.metadata.CampaignId)
-                .Map(dest => dest.CampDescription, src => src.metadata.CampDesc)
+                .Map(dest => dest.CampDescription, src => src.metadata.CampDescription)
                 .Map(dest => dest.ScheduledSendDateTime, src => src.metadata.ScheduledSendDateTime);
 
         // Mapping for BatchMessages where message text comes from the batch item
@@ -34,7 +34,7 @@ public static class MapsterConfigurations
                 .Map(dest => dest.IsSystemApproved, src => src.metadata.IsSystemApproved)
                 .Map(dest => dest.Priority, src => src.metadata.Priority)
                 .Map(dest => dest.CampaignId, src => src.metadata.CampaignId)
-                .Map(dest => dest.CampDescription, src => src.metadata.CampDesc)
+                .Map(dest => dest.CampDescription, src => src.metadata.CampDescription)
                 .Map(dest => dest.ScheduledSendDateTime, src => src.metadata.ScheduledSendDateTime);
     }
 }

@@ -78,7 +78,7 @@ CREATE TABLE dbo.ReadyTable
   [ScheduledSendDateTime] DATETIME2             NOT NULL, -- Auto Generated using GETDATE() in the SP.
   [MessageHash]  			    BINARY(32)            NOT NULL, -- Auto Generated from the SP.
   [Priority]     			    SMALLINT       	      NOT NULL,
-  [CampaignId]			      NVARCHAR(50)	        NULL,
+  [CampaignId]			      NVARCHAR(128)	        NULL,
   [CampDescription]		    NVARCHAR(512)		      NULL,
   [IsSystemApproved]		  BIT					          NOT NULL,
   [Paused]				        BIT					          NOT NULL,
@@ -116,7 +116,7 @@ CREATE TABLE dbo.ArchiveTable
   [StatusDescription]       NVARCHAR(512)   NULL,  -- No default, will be NULL until set
 
   [MobileCountry]           NVARCHAR(10)    NOT NULL,
-  [CampaignId]              NVARCHAR(50)    NULL,
+  [CampaignId]              NVARCHAR(128)    NULL,
   [CampDescription]         NVARCHAR(512)   NULL,
   [IsSystemApproved]        BIT             NOT NULL,
   [Paused]                  BIT             NOT NULL,
@@ -166,7 +166,7 @@ CREATE TABLE dbo.TelegramSentFiles
   [Priority]                      SMALLINT       NOT NULL,
   [FilePath]                      NVARCHAR(260)  NOT NULL,       -- Windows path max
   [FileType]                      NVARCHAR(16)   NOT NULL,       -- Batch or Campaign.
-  [CampaignID]                    NVARCHAR(50)   NOT NULL UNIQUE,
+  [CampaignID]                    NVARCHAR(128)   NOT NULL UNIQUE,
   [CampDescription]               NVARCHAR(256)  NULL,
   [ScheduledSendDateTime]         DATETIME2      NOT NULL,       -- NULL = send ASAP
   [CreationDate]                  DATETIME2      NOT NULL,
@@ -207,7 +207,7 @@ CREATE TYPE dbo.TelegramMessage_Tvp AS TABLE
   [MessageType]             NVARCHAR(10)    NOT NULL,
   [ScheduledSendDateTime]   DATETIME2       NULL,      -- optional; defaulted in proc when NULL
   [Priority]                SMALLINT        NOT NULL,
-  [CampaignId]              NVARCHAR(50)    NULL,
+  [CampaignId]              NVARCHAR(128)    NULL,
   [CampDescription]         NVARCHAR(512)   NULL,
   [IsSystemApproved]        BIT             NOT NULL
 );
@@ -230,7 +230,7 @@ CREATE TABLE dbo.TelegramFiles
   [Priority]                      SMALLINT       NOT NULL,
   [FilePath]                      NVARCHAR(260)  NOT NULL,   -- Windows path max
   [FileType]                      NVARCHAR(16)   NOT NULL,   -- Batch or Campaign
-  [CampaignID]                    NVARCHAR(50)   NOT NULL UNIQUE,
+  [CampaignId]                    NVARCHAR(128)   NOT NULL UNIQUE,
   [CampDescription]               NVARCHAR(256)  NULL,
   [ScheduledSendDateTime]         DATETIME2      NOT NULL,
   [CreationDate]                  DATETIME2      NOT NULL,
